@@ -395,6 +395,48 @@
             transform: translateY(0);
         }
     </style>
+
+    <script type='text/javascript'>
+    function initAgentforceMessaging() {
+        try {
+            agentforce_messaging.init({
+                "siteUrl": "https://orgfarm-d6beaad4d3.test1.my.pc-rnd.site.com/AFMTestVoice1753854080417",
+                "agentApiConfiguration": {
+                        "agentId": "0XxSG000000Inoh0AC", 
+                        "domainUrl": "https://orgfarm-d6beaad4d3.test1.my.pc-rnd.salesforce.com",
+   "authTokenEndpoint": "https://orgfarm-d6beaad4d3.test1.my.pc-rnd.site.com/AFMTestVoice1753854080417/agentforce/bootstrap?agentid=0XxSG000000Inoh0AC"
+                },
+                "uiConfiguration": {}
+            });
+        } catch (err) {
+            console.error('Error loading Agentforce Messaging: ', err);
+        }
+    };
+</script>
+
+<script type='text/javascript'>
+    function loadInitScript() {
+        let script = document.createElement("script");
+        script.id = "init-agentforce-messaging";
+        script.src = "https://test-service.force.com/embeddedservice/agentforcemessaging/0.3/init.js";
+        script.type = "text/javascript";
+
+        script.onerror = () => {
+            console.error("Failed to load init.js");
+        };
+        script.onload = () => {
+            initAgentforceMessaging();
+        };
+
+        document.body.appendChild(script);
+    };
+
+    document.addEventListener("DOMContentLoaded", (event) => {
+        // optionally add a check for document.body       
+        loadInitScript();
+    });
+</script>
+
 </head>
 <body>
     <header class="header">
@@ -614,7 +656,7 @@
             animateStats();
         });
     </script>
-<script type="text/javascript" 
+<!--script type="text/javascript" 
              id='init-agentforce-messaging' 
              src='https://test-service.force.com/embeddedservice/agentforcemessaging/0.3/init.js' 
              onload='agentforce_messaging.init({
@@ -628,6 +670,6 @@
                     },
                     "uiConfiguration": {}
             });'>
-</script>
+</script-->
 </body>
 </html> 
