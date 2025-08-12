@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SFS SolarPanels - Premium Solar Panel Installation & Maintenance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #ffd700;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(30, 60, 114, 0.9), rgba(42, 82, 152, 0.9)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><pattern id="solar" patternUnits="userSpaceOnUse" width="100" height="100"><rect width="100" height="100" fill="%23f0f8ff"/><circle cx="50" cy="50" r="20" fill="%23ffd700" opacity="0.1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23solar)"/></svg>');
+            background-size: cover;
+            background-position: center;
+            padding: 150px 0 100px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 40%, rgba(255, 215, 0, 0.1) 50%, transparent 60%);
+            animation: sunbeam 4s ease-in-out infinite;
+        }
+
+        @keyframes sunbeam {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #1e3c72;
+            padding: 15px 35px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            padding: 15px 35px;
+            border: 2px solid white;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #1e3c72;
+        }
+
+        /* Services Section */
+        .services {
+            padding: 100px 0;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 3rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            transition: left 0.3s ease;
+        }
+
+        .service-card:hover::before {
+            left: 0;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: #ffd700;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 1rem;
+        }
+
+        .service-card p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* Benefits Section */
+        .benefits {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .benefit-item {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .benefit-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #ffd700;
+        }
+
+        .benefit-item h4 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit-item p {
+            opacity: 0.9;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #1e3c72;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            color: #1e3c72;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 50px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffd700;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            line-height: 1.8;
+        }
+
+        .footer-section a:hover {
+            color: #ffd700;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #333;
+            padding-top: 2rem;
+            text-align: center;
+            color: #999;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                ☀️ SFS SolarPanels
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#benefits">Benefits</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Power Your Future with Solar Energy</h1>
+            <p>Leading provider of premium solar panel installation, maintenance, and renewable energy solutions. Reduce your energy costs by up to 90% while helping the environment.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn-primary" onclick="requestQuote()">Get Free Quote</a>
+                <a href="#services" class="btn-secondary">Our Services</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="services" id="services">
+        <div class="container">
+            <h2 class="section-title">Our Solar Solutions</h2>
+            <div class="services-grid">
+                <div class="service-card fade-in">
+                    <div class="service-icon">🔧</div>
+                    <h3>Solar Panel Installation</h3>
+                    <p>Professional installation of high-efficiency solar panels by certified technicians. We handle everything from permits to grid connection.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">⚡</div>
+                    <h3>System Maintenance</h3>
+                    <p>Regular maintenance and monitoring services to ensure your solar system operates at peak efficiency throughout its lifetime.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">📊</div>
+                    <h3>Energy Consultation</h3>
+                    <p>Comprehensive energy audits and custom solar solutions tailored to your specific needs and budget requirements.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="benefits" id="benefits">
+        <div class="container">
+            <h2 class="section-title">Why Choose Solar Energy?</h2>
+            <div class="benefits-grid">
+                <div class="benefit-item fade-in">
+                    <div class="benefit-icon">💰</div>
+                    <h4>Save Money</h4>
+                    <p>Reduce your electricity bills by up to 90% and increase your property value significantly.</p>
+                </div>
+                <div class="benefit-item fade-in">
+                    <div class="benefit-icon">🌱</div>
+                    <h4>Go Green</h4>
+                    <p>Reduce your carbon footprint and contribute to a cleaner, more sustainable future for generations.</p>
+                </div>
+                <div class="benefit-item fade-in">
+                    <div class="benefit-icon">🏠</div>
+                    <h4>Energy Independence</h4>
+                    <p>Generate your own clean energy and reduce dependence on traditional power grid systems.</p>
+                </div>
+                <div class="benefit-item fade-in">
+                    <div class="benefit-icon">🛡️</div>
+                    <h4>25-Year Warranty</h4>
+                    <p>Premium solar panels with comprehensive warranty coverage and guaranteed performance standards.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item fade-in">
+                    <span class="stat-number">5000+</span>
+                    <span class="stat-label">Installations Completed</span>
+                </div>
+                <div class="stat-item fade-in">
+                    <span class="stat-number">15</span>
+                    <span class="stat-label">Years Experience</span>
+                </div>
+                <div class="stat-item fade-in">
+                    <span class="stat-number">98%</span>
+                    <span class="stat-label">Customer Satisfaction</span>
+                </div>
+                <div class="stat-item fade-in">
+                    <span class="stat-number">50MW</span>
+                    <span class="stat-label">Total Capacity Installed</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <h2>Ready to Go Solar?</h2>
+            <p>Join thousands of satisfied customers who are saving money and helping the environment with our solar solutions.</p>
+            <a href="#" class="btn-primary" onclick="requestQuote()">Get Your Free Quote Today</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>SFS SolarPanels</h4>
+                    <p>Leading provider of premium solar energy solutions with over 15 years of experience in renewable energy.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <p><a href="#">Solar Panel Installation</a></p>
+                    <p><a href="#">System Maintenance</a></p>
+                    <p><a href="#">Energy Consultation</a></p>
+                    <p><a href="#">Battery Storage</a></p>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p>📧 info@solartech-solutions.com</p>
+                    <p>📞 (555) 123-SOLAR</p>
+                    <p>📍 123 Green Energy Blvd<br>Solar City, SC 12345</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 SFS SolarPanels. All rights reserved. | Licensed & Insured Solar Contractor</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Request Quote Function
+        function requestQuote() {
+            alert('Thank you for your interest! Our solar experts will contact you within 24 hours to schedule your free consultation and provide a customized quote for your property.');
+        }
+
+        // Scroll animations
+        function observeElements() {
+            const elements = document.querySelectorAll('.fade-in');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            elements.forEach(element => {
+                observer.observe(element);
+            });
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animate stats on scroll
+        function animateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target;
+                        const finalNumber = target.textContent;
+                        const isPlus = finalNumber.includes('+');
+                        const isPercent = finalNumber.includes('%');
+                        const isMW = finalNumber.includes('MW');
+                        
+                        let numericValue = parseInt(finalNumber.replace(/[^0-9]/g, ''));
+                        let current = 0;
+                        const increment = Math.ceil(numericValue / 50);
+                        
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= numericValue) {
+                                current = numericValue;
+                                clearInterval(timer);
+                            }
+                            
+                            let display = current.toString();
+                            if (isPlus) display += '+';
+                            if (isPercent) display += '%';
+                            if (isMW) display += 'MW';
+                            
+                            target.textContent = display;
+                        }, 30);
+                        
+                        observer.unobserve(target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            statNumbers.forEach(stat => observer.observe(stat));
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            observeElements();
+            animateStats();
+        });
+    </script>
+</script>
+  <script type="text/javascript" 
+	id="init-agentforce-messaging" 
+	src="https://test-service.force.com/embeddedservice/agentforcemessaging/0.3/init.js" 
+	onload='agentforce_messaging.init({
+		siteUrl:  "https://orgfarm-ee82e4515b.test2.my.pc-rnd.site.com/testVoice",
+		agentApiConfiguration: {
+	            agentId: "0XxRZ00000057vJ0AQ",
+	            domainUrl: "https://orgfarm-ee82e4515b.test2.my.pc-rnd.salesforce.com",
+	            endpoint: "https://test.api.salesforce.com/einstein/ai-agent/v1.1/agents/{AGENT_ID}/sessions",
+		        	authTokenEndpoint: "https://orgfarm-ee82e4515b.test2.my.pc-rnd.salesforce.com/agentforce/bootstrap?agentid=0XxRZ00000057vJ0AQ",
+	            voiceEndpoint: "https://api.salesforce.com/einstein/ai-agent/v1.1/realtime/sessions/{SESSION_ID}/join",
+	      },
+		uiConfiguration: {
+},
+	});'>
+
+</body>
+</html> 
