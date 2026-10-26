@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scheduling Agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --violet: #6D28D9;
+      --pink: #DB2777;
+      --orange: #F97316;
+      --sky: #0EA5E9;
+      --ink: #2E1065;
+    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #fff;
+      background: linear-gradient(120deg, #4C1D95, #BE185D, #EA580C, #0369A1);
+      background-size: 300% 300%;
+      animation: shift 18s ease infinite;
+      overflow-x: hidden;
+    }
+    @keyframes shift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* Floating color blobs */
+    .blob { position: fixed; border-radius: 50%; filter: blur(70px); opacity: .55; z-index: 0; animation: float 14s ease-in-out infinite; }
+    .blob.a { width: 420px; height: 420px; background: #F472B6; top: -120px; left: -80px; }
+    .blob.b { width: 340px; height: 340px; background: #FBBF24; bottom: -80px; left: 30%; animation-delay: -4s; }
+    .blob.c { width: 300px; height: 300px; background: #38BDF8; top: 20%; right: -80px; animation-delay: -8s; }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, -40px) scale(1.08); }
+    }
+
+    main {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+      min-height: 100vh;
+      padding: 48px 24px;
+      display: grid; grid-template-columns: 1fr 480px; gap: 56px; align-items: center;
+    }
+
+    /* ---------- Left: hero ---------- */
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 999px;
+      font-size: .8rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+      background: rgba(255, 255, 255, .18); border: 1px solid rgba(255, 255, 255, .35);
+      backdrop-filter: blur(8px);
+    }
+    h1 {
+      margin: 20px 0 14px;
+      font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 800; line-height: 1.02;
+      text-shadow: 0 8px 30px rgba(46, 16, 101, .35);
+    }
+    h1 .glow {
+      background: linear-gradient(90deg, #FDE68A, #FBCFE8, #BAE6FD);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .lead { margin: 0 0 32px; font-size: 1.15rem; max-width: 34ch; opacity: .92; }
+
+    .chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; max-width: 520px; }
+    .chip {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 18px; border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, .35);
+      background: rgba(255, 255, 255, .14);
+      backdrop-filter: blur(10px);
+      font: inherit; color: #fff; text-align: left; cursor: pointer;
+      transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+    .chip:hover:not(:disabled) { transform: translateY(-3px); background: rgba(255, 255, 255, .24); box-shadow: 0 14px 30px rgba(46, 16, 101, .3); }
+    .chip:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+    .chip:disabled { opacity: .55; cursor: wait; }
+    .chip .icon {
+      flex: none; display: grid; place-items: center;
+      width: 44px; height: 44px; border-radius: 14px; font-size: 1.3rem;
+    }
+    .chip.book .icon       { background: linear-gradient(135deg, #7C3AED, #DB2777); }
+    .chip.reschedule .icon { background: linear-gradient(135deg, #DB2777, #F97316); }
+    .chip.cancel .icon     { background: linear-gradient(135deg, #EA580C, #CA8A04); }
+    .chip.status .icon     { background: linear-gradient(135deg, #0284C7, #7C3AED); }
+    .chip .title { display: block; font-weight: 600; }
+    .chip .sub { display: block; font-size: .8rem; opacity: .85; }
+
+    /* ---------- Right: the chat window ---------- */
+    .window-wrap {
+      position: relative;
+      border-radius: 30px;
+      padding: 3px; /* thickness of the rainbow border */
+      isolation: isolate;
+      box-shadow: 0 40px 100px rgba(46, 16, 101, .55), 0 0 60px rgba(219, 39, 119, .35);
+      overflow: hidden;
+    }
+    /* Rotating rainbow border */
+    .window-wrap::before {
+      content: ""; position: absolute; inset: -50%; z-index: -1;
+      background: conic-gradient(from 0deg, #F472B6, #A78BFA, #38BDF8, #34D399, #FBBF24, #F97316, #F472B6);
+      animation: spin 6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .window {
+      border-radius: 27px; overflow: hidden;
+      background: #FFFBFE;
+      display: flex; flex-direction: column;
+      height: min(720px, calc(100vh - 96px));
+    }
+    .chrome {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px;
+      background: linear-gradient(90deg, var(--violet), var(--pink) 60%, var(--orange));
+    }
+    .lights { display: flex; gap: 7px; }
+    .lights span { width: 12px; height: 12px; border-radius: 50%; background: rgba(255, 255, 255, .45); }
+    .lights span:nth-child(1) { background: #FCA5A5; }
+    .lights span:nth-child(2) { background: #FDE68A; }
+    .lights span:nth-child(3) { background: #86EFAC; }
+    .avatar {
+      display: grid; place-items: center;
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(255, 255, 255, .25); border: 2px solid rgba(255, 255, 255, .7);
+      font-size: 1.15rem;
+    }
+    .who { line-height: 1.15; }
+    .who strong { display: block; font-size: .98rem; }
+    .who small { display: inline-flex; align-items: center; gap: 6px; font-size: .75rem; opacity: .92; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #FDE68A; }
+    .online .dot { background: #4ADE80; box-shadow: 0 0 0 3px rgba(74, 222, 128, .35); }
+    .offline .dot { background: #FCA5A5; }
+    .reset {
+      margin-left: auto;
+      padding: 7px 14px; border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, .6); background: rgba(255, 255, 255, .15);
+      font: inherit; font-size: .8rem; color: #fff; cursor: pointer;
+    }
+    .reset:hover { background: rgba(255, 255, 255, .3); }
+
+    .chat-area { position: relative; flex: 1; min-height: 0; }
+    /* Salesforce renders the conversation iframe into this element (inline mode). */
+    #chat-container { position: absolute; inset: 0; }
+    #chat-container iframe { width: 100% !important; height: 100% !important; border: 0; }
+
+    /* Loader shown until the agent is ready */
+    .loader {
+      position: absolute; inset: 0; z-index: 2;
+      display: grid; place-content: center; justify-items: center; gap: 16px;
+      color: var(--ink); background: #FFFBFE;
+      transition: opacity .4s ease;
+    }
+    .loader.hidden { opacity: 0; pointer-events: none; }
+    .typing { display: flex; gap: 8px; }
+    .typing span { width: 12px; height: 12px; border-radius: 50%; animation: bounce 1.2s infinite ease-in-out; }
+    .typing span:nth-child(1) { background: var(--violet); }
+    .typing span:nth-child(2) { background: var(--pink); animation-delay: .15s; }
+    .typing span:nth-child(3) { background: var(--orange); animation-delay: .3s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: .5; }
+      40% { transform: translateY(-10px); opacity: 1; }
+    }
+    .loader p { margin: 0; font-size: .95rem; color: #6B4E8C; }
+    .loader.error p { color: #B91C1C; }
+
+    @media (max-width: 980px) {
+      main { grid-template-columns: 1fr; gap: 36px; padding-top: 36px; }
+      .lead { max-width: none; }
+      .chips { max-width: none; }
+      .window { height: 640px; }
+    }
+    @media (max-width: 520px) {
+      .chips { grid-template-columns: 1fr; }
+      .lights { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      body, .blob, .window-wrap::before, .typing span { animation: none; }
+      .chip, .loader { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="blob a" aria-hidden="true"></div>
+  <div class="blob b" aria-hidden="true"></div>
+  <div class="blob c" aria-hidden="true"></div>
+
+  <main>
+    <section>
+      <span class="badge">✨ Powered by Agentforce</span>
+      <h1>Your appointments, <span class="glow">sorted in a chat.</span></h1>
+      <p class="lead">Book, move, or cancel a visit with our Scheduling Agent — any time of day, in plain language.</p>
+
+      <div class="chips">
+        <button class="chip book" data-prompt="I'd like to book a new appointment." disabled>
+          <span class="icon" aria-hidden="true">📅</span>
+          <span><span class="title">Book</span><span class="sub">Schedule a new visit</span></span>
+        </button>
+        <button class="chip reschedule" data-prompt="I need to reschedule my appointment." disabled>
+          <span class="icon" aria-hidden="true">🔁</span>
+          <span><span class="title">Reschedule</span><span class="sub">Pick a new time</span></span>
+        </button>
+        <button class="chip cancel" data-prompt="I want to cancel my appointment." disabled>
+          <span class="icon" aria-hidden="true">✖️</span>
+          <span><span class="title">Cancel</span><span class="sub">Free up your slot</span></span>
+        </button>
+        <button class="chip status" data-prompt="Can you tell me about my upcoming appointment?" disabled>
+          <span class="icon" aria-hidden="true">🔎</span>
+          <span><span class="title">Check status</span><span class="sub">See what's booked</span></span>
+        </button>
+      </div>
+    </section>
+
+    <section class="window-wrap" aria-label="Chat with the Scheduling Agent">
+      <div class="window">
+        <div class="chrome">
+          <div class="lights" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="avatar" aria-hidden="true">🗓️</div>
+          <div class="who">
+            <strong>Scheduling Agent</strong>
+            <small id="presence" role="status"><span class="dot" aria-hidden="true"></span><span id="presenceText">Connecting…</span></small>
+          </div>
+          <button id="reset" class="reset">↺ Start over</button>
+        </div>
+        <div class="chat-area">
+          <div id="loader" class="loader">
+            <div class="typing" aria-hidden="true"><span></span><span></span><span></span></div>
+            <p id="loaderText">Waking up your agent…</p>
+          </div>
+          <div id="chat-container"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Values from Setup → Embedded Service Deployments → Deployment → Code Snippet
+    const ORG_ID = '00Dfi800007gz33';
+    const DEPLOYMENT = 'Deployment';
+    const SITE_URL = 'https://orgfarm-bad15eaba0.test1.my.pc-rnd.site.com/ESWDeployment1747655154112';
+    const SCRT2_URL = 'https://orgfarm-bad15eaba0.test1.my.pc-rnd.salesforce-scrt.com';
+
+    const presence = document.getElementById('presence');
+    const presenceText = document.getElementById('presenceText');
+    const loader = document.getElementById('loader');
+    const loaderText = document.getElementById('loaderText');
+    const chips = document.querySelectorAll('.chip');
+
+    function fail(message) {
+      presence.className = 'offline';
+      presenceText.textContent = 'Offline';
+      loader.classList.add('error');
+      loaderText.textContent = message;
+    }
+
+    function initEmbeddedMessaging() {
+      try {
+        const bootstrap = embeddedservice_bootstrap;
+        bootstrap.settings.language = 'en_US';
+        // Inline mode: render the conversation inside our styled window instead of a floating popup.
+        bootstrap.settings.displayMode = 'inline';
+        bootstrap.settings.targetElement = document.getElementById('chat-container');
+        bootstrap.init(ORG_ID, DEPLOYMENT, SITE_URL, { scrt2URL: SCRT2_URL });
+      } catch (err) {
+        fail('Chat failed to load.');
+        console.error('Error loading Embedded Messaging:', err);
+      }
+    }
+
+    window.addEventListener('onEmbeddedMessagingReady', () => {
+      presence.className = 'online';
+      presenceText.textContent = 'Online · replies instantly';
+      loader.classList.add('hidden');
+      chips.forEach((c) => (c.disabled = false));
+    });
+
+    // Quick actions send the request into the conversation.
+    chips.forEach((chip) => {
+      chip.addEventListener('click', async () => {
+        try {
+          await embeddedservice_bootstrap.utilAPI.launchChat();
+          await embeddedservice_bootstrap.utilAPI.sendTextMessage(chip.dataset.prompt);
+        } catch (err) {
+          // The chat is still usable; the visitor can type the request themselves.
+          console.warn('Could not send quick action message:', err);
+        }
+      });
+    });
+
+    // The client caches the conversation in localStorage per org; clear it to start fresh.
+    document.getElementById('reset').addEventListener('click', () => {
+      localStorage.removeItem(ORG_ID + '_WEB_STORAGE');
+      location.reload();
+    });
+
+    const script = document.createElement('script');
+    script.src = SITE_URL + '/assets/js/bootstrap.min.js';
+    script.onload = initEmbeddedMessaging;
+    script.onerror = () => fail('Chat script failed to load.');
+    document.body.appendChild(script);
+  </script>
+</body>
+</html>
