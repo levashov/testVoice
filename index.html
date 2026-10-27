@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scheduling Agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --violet: #6D28D9;
+      --pink: #DB2777;
+      --orange: #F97316;
+      --sky: #0EA5E9;
+      --ink: #2E1065;
+    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #fff;
+      background: linear-gradient(120deg, #4C1D95, #BE185D, #EA580C, #0369A1);
+      background-size: 300% 300%;
+      animation: shift 18s ease infinite;
+      overflow-x: hidden;
+    }
+    @keyframes shift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* Floating color blobs */
+    .blob { position: fixed; border-radius: 50%; filter: blur(70px); opacity: .55; z-index: 0; animation: float 14s ease-in-out infinite; }
+    .blob.a { width: 420px; height: 420px; background: #F472B6; top: -120px; left: -80px; }
+    .blob.b { width: 340px; height: 340px; background: #FBBF24; bottom: -80px; left: 30%; animation-delay: -4s; }
+    .blob.c { width: 300px; height: 300px; background: #38BDF8; top: 20%; right: -80px; animation-delay: -8s; }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, -40px) scale(1.08); }
+    }
+
+    main {
+      position: relative; z-index: 1;
+      max-width: 720px; margin: 0 auto;
+      min-height: 100vh;
+      padding: 48px 24px;
+      display: grid; align-content: center;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 999px;
+      font-size: .8rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+      background: rgba(255, 255, 255, .18); border: 1px solid rgba(255, 255, 255, .35);
+      backdrop-filter: blur(8px);
+    }
+    h1 {
+      margin: 20px 0 14px;
+      font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 800; line-height: 1.02;
+      text-shadow: 0 8px 30px rgba(46, 16, 101, .35);
+    }
+    h1 .glow {
+      background: linear-gradient(90deg, #FDE68A, #FBCFE8, #BAE6FD);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .lead { margin: 0 0 32px; font-size: 1.15rem; max-width: 40ch; opacity: .92; }
+
+    .chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; max-width: 520px; }
+    .chip {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 18px; border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, .35);
+      background: rgba(255, 255, 255, .14);
+      backdrop-filter: blur(10px);
+      font: inherit; color: #fff; text-align: left; cursor: pointer;
+      transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+    .chip:hover { transform: translateY(-3px); background: rgba(255, 255, 255, .24); box-shadow: 0 14px 30px rgba(46, 16, 101, .3); }
+    .chip:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+    .chip .icon {
+      flex: none; display: grid; place-items: center;
+      width: 44px; height: 44px; border-radius: 14px; font-size: 1.3rem;
+    }
+    .chip.book .icon       { background: linear-gradient(135deg, #7C3AED, #DB2777); }
+    .chip.reschedule .icon { background: linear-gradient(135deg, #DB2777, #F97316); }
+    .chip.cancel .icon     { background: linear-gradient(135deg, #EA580C, #CA8A04); }
+    .chip.status .icon     { background: linear-gradient(135deg, #0284C7, #7C3AED); }
+    .chip .title { display: block; font-weight: 600; }
+    .chip .sub { display: block; font-size: .8rem; opacity: .85; }
+
+    @media (max-width: 520px) {
+      .chips { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      body, .blob { animation: none; }
+      .chip { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="blob a" aria-hidden="true"></div>
+  <div class="blob b" aria-hidden="true"></div>
+  <div class="blob c" aria-hidden="true"></div>
+
+  <main>
+    <section>
+      <span class="badge">✨ Powered by Agentforce</span>
+      <h1>Your appointments, <span class="glow">sorted in a chat.</span></h1>
+      <p class="lead">Book, move, or cancel a visit with our Scheduling Agent — any time of day, in plain language. Open the chat to get started.</p>
+
+      <div class="chips">
+        <button class="chip book" data-prompt="I'd like to book a new appointment.">
+          <span class="icon" aria-hidden="true">📅</span>
+          <span><span class="title">Book</span><span class="sub">Schedule a new visit</span></span>
+        </button>
+        <button class="chip reschedule" data-prompt="I need to reschedule my appointment.">
+          <span class="icon" aria-hidden="true">🔁</span>
+          <span><span class="title">Reschedule</span><span class="sub">Pick a new time</span></span>
+        </button>
+        <button class="chip cancel" data-prompt="I want to cancel my appointment.">
+          <span class="icon" aria-hidden="true">✖️</span>
+          <span><span class="title">Cancel</span><span class="sub">Free up your slot</span></span>
+        </button>
+        <button class="chip status" data-prompt="Can you tell me about my upcoming appointment?">
+          <span class="icon" aria-hidden="true">🔎</span>
+          <span><span class="title">Check status</span><span class="sub">See what's booked</span></span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    window.intercomSettings = {
+      api_base: "https://api-iam.intercom.io",
+      app_id: "onvesdr4",
+      messenger_environment: "pndqexos41",
+    };
+  </script>
+  <script>
+    // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/onvesdr4'
+    (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/onvesdr4';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(document.readyState==='complete'){l();}else if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
+  </script>
+  <script>
+    document.querySelectorAll('.chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        Intercom('showNewMessage', chip.dataset.prompt);
+      });
+    });
+  </script>
+</body>
+</html>
